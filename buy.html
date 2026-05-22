@@ -51,9 +51,11 @@
             border-radius: 40px;
             font-weight: 500;
             cursor: pointer;
+            transition: 0.2s;
         }
         .back-home:hover {
             background: rgba(0,0,0,0.1);
+            transform: scale(0.97);
         }
 
         .search-section {
@@ -108,6 +110,7 @@
             font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
         .cat-btn.active {
             background: #2563eb;
@@ -116,6 +119,7 @@
         }
         .cat-btn:hover:not(.active) {
             background: rgba(0,0,0,0.1);
+            transform: translateY(-1px);
         }
 
         .ads-grid {
@@ -129,8 +133,8 @@
             backdrop-filter: blur(4px);
             border-radius: 1.5rem;
             overflow: hidden;
-            cursor: pointer;
             transition: all 0.25s ease;
+            cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         .ad-card:hover {
@@ -170,6 +174,7 @@
             font-weight: 600;
             font-size: 0.75rem;
             cursor: pointer;
+            transition: 0.15s;
             background: rgba(0,0,0,0.05);
         }
         .msg-btn {
@@ -200,7 +205,11 @@
             border: none;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: 0.2s;
             z-index: 200;
+        }
+        .floating-add:hover {
+            transform: scale(1.05);
         }
 
         .modal {
@@ -290,11 +299,15 @@
             cursor: pointer;
             border-radius: 0.8rem;
         }
+        .dots-menu button:hover {
+            background: #334155;
+        }
         .empty-state {
             text-align: center;
             padding: 3rem;
             background: rgba(255,255,255,0.5);
             border-radius: 2rem;
+            backdrop-filter: blur(4px);
         }
         @media (max-width: 640px) {
             .container { padding: 1rem; }
@@ -333,16 +346,16 @@
 <div id="createModal" class="modal">
     <div class="modal-content">
         <h3>📢 Новое объявление</h3>
-        <input type="text" id="adTitle" placeholder="Название товара">
+        <input type="text" id="adTitle" placeholder="Название товара" required>
         <select id="adCategory">
             <option>Электроника</option><option>Одежда</option><option>Обувь</option>
             <option>Дом и сад</option><option>Другое</option>
         </select>
-        <input type="number" id="adPrice" placeholder="Цена в ₽">
+        <input type="number" id="adPrice" placeholder="Цена в ₽" required>
         <div class="file-label">📸 Загрузить фото</div>
         <input type="file" id="adImageFile" accept="image/*" style="display:none">
         <div class="image-preview-area">
-            <img id="imagePreview" class="image-preview">
+            <img id="imagePreview" class="image-preview" alt="предпросмотр">
         </div>
         <textarea id="adDescription" rows="3" placeholder="Полное описание..."></textarea>
         <button id="saveAdBtn">✅ Опубликовать</button>
@@ -363,284 +376,282 @@
 </div>
 
 <script>
-    // ---------- Глобальные данные ----------
-    let ads = [];
-    let currentFilter = { search: '', category: 'all' };
-    let isPublishing = false;
+    (function() {
+        // ---------- Данные ----------
+        let ads = [];
+        let isPublishing = false;
 
-    // Функции работы с localStorage
-    function saveAds() {
-        localStorage.setItem('baraholka_ads', JSON.stringify(ads));
-    }
-
-    function loadAdsFromStorage() {
-        const stored = localStorage.getItem('baraholka_ads');
-        if (stored && stored !== 'undefined') {
-            ads = JSON.parse(stored);
-        } 
-        if (!ads || !ads.length) {
-            // Начальные тестовые объявления
-            ads = [
-                { id: 1, title: "iPhone 16 Pro", category: "Электроника", price: 120000, imageData: null, imageUrl: "https://images.unsplash.com/photo-1678652196566-7b92f8e4cee1?w=400", description: "Отличное состояние, полный комплект." },
-                { id: 2, title: "Nike Air Max", category: "Обувь", price: 12500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", description: "Новые, размер 42, оригинал." },
-                { id: 3, title: "Умная колонка", category: "Электроника", price: 4500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1589003077984-894e133ddfab?w=400", description: "Красная, отличное состояние." }
-            ];
-            saveAds();
+        function saveAds() {
+            localStorage.setItem('baraholka_ads', JSON.stringify(ads));
         }
-        applyFilterAndRender();
-    }
 
-    function getAdImageSrc(ad) {
-        if (ad.imageData && ad.imageData.startsWith('data:image')) return ad.imageData;
-        if (ad.imageUrl) return ad.imageUrl;
-        return 'https://via.placeholder.com/400?text=Нет+фото';
-    }
-
-    function applyFilterAndRender() {
-        const searchTerm = currentFilter.search.toLowerCase();
-        const category = currentFilter.category;
-        const filtered = ads.filter(ad => {
-            const matchSearch = ad.title.toLowerCase().includes(searchTerm);
-            const matchCat = (category === 'all') || (ad.category === category);
-            return matchSearch && matchCat;
-        });
-        renderAds(filtered);
-    }
-
-    function renderAds(adsToRender) {
-        const container = document.getElementById('adsList');
-        if (!container) return;
-        if (!adsToRender.length) {
-            container.innerHTML = `<div class="empty-state">📭 Пока нет объявлений. Нажмите + чтобы создать первое</div>`;
-            return;
+        function loadInitialAds() {
+            const stored = localStorage.getItem('baraholka_ads');
+            if (stored) {
+                ads = JSON.parse(stored);
+            } else {
+                ads = [
+                    { id: 1, title: "iPhone 16 Pro", category: "Электроника", price: 120000, imageData: null, imageUrl: "https://images.unsplash.com/photo-1678652196566-7b92f8e4cee1?w=400", description: "Отличное состояние, полный комплект." },
+                    { id: 2, title: "Nike Air Max", category: "Обувь", price: 12500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", description: "Новые, размер 42, оригинал." },
+                    { id: 3, title: "Умная колонка", category: "Электроника", price: 4500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1589003077984-894e133ddfab?w=400", description: "Красная, отличное состояние." }
+                ];
+                saveAds();
+            }
         }
-        container.innerHTML = adsToRender.map(ad => {
-            const imgSrc = getAdImageSrc(ad);
-            return `
-                <div class="ad-card" data-id="${ad.id}">
-                    <img class="ad-image" src="${imgSrc}" alt="${ad.title}" onerror="this.src='https://via.placeholder.com/400?text=Ошибка'">
-                    <div class="ad-info">
-                        <div class="ad-title">${escapeHtml(ad.title)}</div>
-                        <div class="ad-category" style="font-size:0.7rem; opacity:0.7;">${ad.category}</div>
-                        <div class="ad-price">${Number(ad.price).toLocaleString()} ₽</div>
-                        <div class="ad-buttons">
-                            <button class="ad-btn msg-btn" data-id="${ad.id}">💬 Написать</button>
-                            <div class="menu-dots">
-                                <button class="ad-btn dots-btn" data-id="${ad.id}">⋮</button>
-                                <div class="dots-menu" id="menu-${ad.id}">
-                                    <button data-action="complaint" data-id="${ad.id}">⚠️ Пожаловаться</button>
-                                    <button data-action="favorite" data-id="${ad.id}">❤️ В избранное</button>
-                                    <button data-action="rate" data-id="${ad.id}">⭐ Оценить продавца</button>
+
+        function getAdImageSrc(ad) {
+            if (ad.imageData && ad.imageData.startsWith('data:image')) return ad.imageData;
+            if (ad.imageUrl) return ad.imageUrl;
+            return 'https://via.placeholder.com/400?text=Нет+фото';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // Глобальная переменная для текущего фильтра, чтобы не терять состояние
+        let currentFilter = { query: '', category: 'all' };
+
+        function getFilteredAds() {
+            const query = currentFilter.query.toLowerCase();
+            const activeCat = currentFilter.category;
+            return ads.filter(ad => {
+                const matchSearch = ad.title.toLowerCase().includes(query);
+                const matchCat = (activeCat === 'all') || (ad.category === activeCat);
+                return matchSearch && matchCat;
+            });
+        }
+
+        function renderAds() {
+            const container = document.getElementById('adsList');
+            const filtered = getFilteredAds();
+            if (!filtered.length) {
+                container.innerHTML = `<div class="empty-state">📭 Пока нет объявлений. Нажмите + чтобы создать первое</div>`;
+                return;
+            }
+            container.innerHTML = filtered.map(ad => {
+                const imgSrc = getAdImageSrc(ad);
+                return `
+                    <div class="ad-card" data-id="${ad.id}">
+                        <img class="ad-image" src="${imgSrc}" alt="${ad.title}" onerror="this.src='https://via.placeholder.com/400?text=Ошибка'">
+                        <div class="ad-info">
+                            <div class="ad-title">${escapeHtml(ad.title)}</div>
+                            <div class="ad-category" style="font-size:0.7rem; opacity:0.7;">${ad.category}</div>
+                            <div class="ad-price">${Number(ad.price).toLocaleString()} ₽</div>
+                            <div class="ad-buttons">
+                                <button class="ad-btn msg-btn" data-id="${ad.id}">💬 Написать</button>
+                                <div class="menu-dots">
+                                    <button class="ad-btn dots-btn" data-id="${ad.id}">⋮</button>
+                                    <div class="dots-menu" id="menu-${ad.id}">
+                                        <button data-action="complaint" data-id="${ad.id}">⚠️ Пожаловаться</button>
+                                        <button data-action="favorite" data-id="${ad.id}">❤️ В избранное</button>
+                                        <button data-action="rate" data-id="${ad.id}">⭐ Оценить продавца</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
-        }).join('');
-        attachCardEvents();
-    }
+                `;
+            }).join('');
+            attachCardEvents();
+        }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
+        function attachCardEvents() {
+            // Открытие деталей
+            document.querySelectorAll('.ad-card').forEach(card => {
+                // Удаляем старый обработчик, чтобы не дублировать
+                const oldHandler = card._clickHandler;
+                if (oldHandler) card.removeEventListener('click', oldHandler);
+                const handler = (e) => {
+                    if (e.target.closest('.ad-btn')) return;
+                    const id = parseInt(card.dataset.id);
+                    showDetail(id);
+                };
+                card.addEventListener('click', handler);
+                card._clickHandler = handler;
+            });
+            // Кнопки "Написать"
+            document.querySelectorAll('.msg-btn').forEach(btn => {
+                const oldMsg = btn._msgHandler;
+                if (oldMsg) btn.removeEventListener('click', oldMsg);
+                const msgHandler = (e) => {
+                    e.stopPropagation();
+                    alert('💬 Чат с продавцом будет доступен позже.');
+                };
+                btn.addEventListener('click', msgHandler);
+                btn._msgHandler = msgHandler;
+            });
+            // Кнопки с тремя точками (открыть меню)
+            document.querySelectorAll('.dots-btn').forEach(btn => {
+                const oldDot = btn._dotHandler;
+                if (oldDot) btn.removeEventListener('click', oldDot);
+                const dotHandler = (e) => {
+                    e.stopPropagation();
+                    const id = btn.dataset.id;
+                    const menu = document.getElementById(`menu-${id}`);
+                    if (!menu) return;
+                    // Закрываем все другие меню
+                    document.querySelectorAll('.dots-menu').forEach(m => {
+                        if (m !== menu) m.style.display = 'none';
+                    });
+                    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+                };
+                btn.addEventListener('click', dotHandler);
+                btn._dotHandler = dotHandler;
+            });
+            // Действия внутри меню
+            document.querySelectorAll('[data-action="complaint"]').forEach(btn => {
+                btn.onclick = (e) => { e.stopPropagation(); alert('⚠️ Жалоба отправлена модератору.'); };
+            });
+            document.querySelectorAll('[data-action="favorite"]').forEach(btn => {
+                btn.onclick = (e) => { e.stopPropagation(); alert('❤️ Добавлено в избранное.'); };
+            });
+            document.querySelectorAll('[data-action="rate"]').forEach(btn => {
+                btn.onclick = (e) => { e.stopPropagation(); alert('⭐ Оценка продавца уйдёт на модерацию.'); };
+            });
+        }
 
-    function attachCardEvents() {
-        // Открытие карточки
-        document.querySelectorAll('.ad-card').forEach(card => {
-            card.removeEventListener('click', card._clickHandler);
-            const handler = (e) => {
-                if (e.target.closest('.ad-btn')) return;
-                const id = parseInt(card.dataset.id);
-                showDetail(id);
-            };
-            card.addEventListener('click', handler);
-            card._clickHandler = handler;
+        function showDetail(id) {
+            const ad = ads.find(a => a.id == id);
+            if (!ad) return;
+            const detailModal = document.getElementById('detailModal');
+            document.getElementById('detailImage').src = getAdImageSrc(ad);
+            document.getElementById('detailTitle').innerText = ad.title;
+            document.getElementById('detailPrice').innerHTML = `${Number(ad.price).toLocaleString()} ₽`;
+            document.getElementById('detailCategory').innerHTML = `📂 ${ad.category}`;
+            document.getElementById('detailDesc').innerHTML = ad.description || 'Описание отсутствует.';
+            detailModal.style.display = 'flex';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        // Закрытие меню при клике вне области карточек
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.menu-dots')) {
+                document.querySelectorAll('.dots-menu').forEach(m => m.style.display = 'none');
+            }
         });
-        // Кнопка "Написать"
-        document.querySelectorAll('.msg-btn').forEach(btn => {
-            btn.removeEventListener('click', btn._msgHandler);
-            const msgHandler = (e) => {
-                e.stopPropagation();
-                alert('💬 Чат с продавцом будет доступен позже.');
-            };
-            btn.addEventListener('click', msgHandler);
-            btn._msgHandler = msgHandler;
+
+        // ---------- Фильтрация и поиск ----------
+        const searchInput = document.getElementById('searchInput');
+        const categoryButtons = document.querySelectorAll('.cat-btn');
+
+        function updateFilterAndRender() {
+            currentFilter.query = searchInput.value;
+            renderAds();
+        }
+
+        searchInput.addEventListener('input', updateFilterAndRender);
+        categoryButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter.category = this.getAttribute('data-cat');
+                renderAds();
+            });
         });
-        // Три точки
-        document.querySelectorAll('.dots-btn').forEach(btn => {
-            btn.removeEventListener('click', btn._dotsHandler);
-            const dotsHandler = (e) => {
-                e.stopPropagation();
-                const id = btn.dataset.id;
-                const menu = document.getElementById(`menu-${id}`);
-                document.querySelectorAll('.dots-menu').forEach(m => { if (m !== menu) m.style.display = 'none'; });
-                menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-            };
-            btn.addEventListener('click', dotsHandler);
-            btn._dotsHandler = dotsHandler;
-        });
-        // Меню действия
-        document.querySelectorAll('[data-action="complaint"]').forEach(btn => {
-            btn.onclick = (e) => { e.stopPropagation(); alert('⚠️ Жалоба отправлена модератору.'); };
-        });
-        document.querySelectorAll('[data-action="favorite"]').forEach(btn => {
-            btn.onclick = (e) => { e.stopPropagation(); alert('❤️ Добавлено в избранное.'); };
-        });
-        document.querySelectorAll('[data-action="rate"]').forEach(btn => {
-            btn.onclick = (e) => { e.stopPropagation(); alert('⭐ Оценка продавца уйдёт на модерацию.'); };
-        });
-        // Закрыть все меню при клике вне
-        const closeMenus = () => {
-            document.querySelectorAll('.dots-menu').forEach(m => m.style.display = 'none');
+
+        // ---------- Создание объявления (без блокировки) ----------
+        let selectedImageBase64 = null;
+
+        document.getElementById('addAdBtn').onclick = () => {
+            selectedImageBase64 = null;
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('adImageFile').value = '';
+            document.getElementById('adTitle').value = '';
+            document.getElementById('adPrice').value = '';
+            document.getElementById('adDescription').value = '';
+            document.getElementById('createModal').style.display = 'flex';
         };
-        document.removeEventListener('click', closeMenus);
-        document.addEventListener('click', closeMenus);
-    }
 
-    function showDetail(id) {
-        const ad = ads.find(a => a.id == id);
-        if (!ad) return;
-        document.getElementById('detailImage').src = getAdImageSrc(ad);
-        document.getElementById('detailTitle').innerText = ad.title;
-        document.getElementById('detailPrice').innerHTML = `${Number(ad.price).toLocaleString()} ₽`;
-        document.getElementById('detailCategory').innerHTML = `📂 ${ad.category}`;
-        document.getElementById('detailDesc').innerHTML = ad.description || 'Описание отсутствует.';
-        document.getElementById('detailModal').style.display = 'flex';
-    }
-
-    function closeDetailModal() {
-        document.getElementById('detailModal').style.display = 'none';
-    }
-
-    // Функция для обновления поиска/категории и рендера
-    function updateSearch() {
-        currentFilter.search = document.getElementById('searchInput').value;
-        applyFilterAndRender();
-    }
-
-    function setCategory(cat) {
-        currentFilter.category = cat;
-        applyFilterAndRender();
-    }
-
-    // --- Создание объявления (асинхронное, без пропадания) ---
-    let selectedImageBase64 = null;
-
-    document.getElementById('addAdBtn').onclick = () => {
-        selectedImageBase64 = null;
-        document.getElementById('imagePreview').style.display = 'none';
-        document.getElementById('adImageFile').value = '';
-        document.getElementById('adTitle').value = '';
-        document.getElementById('adPrice').value = '';
-        document.getElementById('adDescription').value = '';
-        document.getElementById('createModal').style.display = 'flex';
-    };
-
-    document.querySelector('.file-label').onclick = () => {
-        document.getElementById('adImageFile').click();
-    };
-    document.getElementById('adImageFile').onchange = function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                selectedImageBase64 = ev.target.result;
-                const preview = document.getElementById('imagePreview');
-                preview.src = selectedImageBase64;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    function closeModal() {
-        document.getElementById('createModal').style.display = 'none';
-    }
-
-    async function createAdAsync() {
-        if (isPublishing) return;
-        const title = document.getElementById('adTitle').value.trim();
-        const category = document.getElementById('adCategory').value;
-        const price = parseFloat(document.getElementById('adPrice').value);
-        const description = document.getElementById('adDescription').value.trim();
-
-        if (!title || isNaN(price) || price <= 0) {
-            alert('Укажите название и корректную цену');
-            return;
-        }
-        if (!selectedImageBase64) {
-            alert('Пожалуйста, загрузите фото товара (обязательно)');
-            return;
-        }
-
-        isPublishing = true;
-        const saveBtn = document.getElementById('saveAdBtn');
-        const originalText = saveBtn.innerText;
-        saveBtn.innerText = 'Публикация...';
-        saveBtn.disabled = true;
-
-        // Небольшая пауза для освобождения потока
-        await new Promise(resolve => setTimeout(resolve, 10));
-
-        const newAd = {
-            id: Date.now(),
-            title: title,
-            category: category,
-            price: price,
-            imageData: selectedImageBase64,
-            imageUrl: null,
-            description: description || 'Без описания'
+        document.querySelector('.file-label').onclick = () => {
+            document.getElementById('adImageFile').click();
         };
-        ads.unshift(newAd);
-        saveAds();
+        document.getElementById('adImageFile').onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    selectedImageBase64 = ev.target.result;
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = selectedImageBase64;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        };
 
-        // Сохраняем текущий фильтр, чтобы после добавления он не сбрасывался
-        const currentSearch = currentFilter.search;
-        const currentCat = currentFilter.category;
-        // Обновляем рендер с учётом фильтра
-        applyFilterAndRender();
+        function closeModal() {
+            document.getElementById('createModal').style.display = 'none';
+        }
 
-        closeModal();
-        alert('✅ Объявление опубликовано!');
-        saveBtn.innerText = originalText;
-        saveBtn.disabled = false;
-        isPublishing = false;
+        async function createAdAsync() {
+            if (isPublishing) return;
+            const title = document.getElementById('adTitle').value.trim();
+            const category = document.getElementById('adCategory').value;
+            const price = parseFloat(document.getElementById('adPrice').value);
+            const description = document.getElementById('adDescription').value.trim();
 
-        // Убедимся, что поле поиска и выбранная категория остались прежними
-        document.getElementById('searchInput').value = currentSearch;
-        // Активная категория визуально не изменилась, но вызовем повторный рендер для синхронизации (необязательно)
-        applyFilterAndRender();
-    }
+            if (!title || isNaN(price) || price <= 0) {
+                alert('Укажите название и корректную цену');
+                return;
+            }
+            if (!selectedImageBase64) {
+                alert('Пожалуйста, загрузите фото товара (обязательно)');
+                return;
+            }
 
-    // Привязываем обработчик кнопки публикации
-    document.getElementById('saveAdBtn').onclick = (e) => {
-        e.preventDefault();
-        createAdAsync();
-    };
+            isPublishing = true;
+            const saveBtn = document.getElementById('saveAdBtn');
+            const originalText = saveBtn.innerText;
+            saveBtn.innerText = 'Публикация...';
+            saveBtn.disabled = true;
 
-    // Инициализация поиска и категорий
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', updateSearch);
-    document.querySelectorAll('.cat-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const cat = this.getAttribute('data-cat');
-            setCategory(cat);
-        });
-    });
+            await new Promise(resolve => setTimeout(resolve, 10));
 
-    // Запуск приложения
-    loadAdsFromStorage();
-    window.closeDetailModal = closeDetailModal;
-    window.closeModal = closeModal;
+            const newAd = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                price: price,
+                imageData: selectedImageBase64,
+                imageUrl: null,
+                description: description || 'Без описания'
+            };
+            ads.unshift(newAd);
+            saveAds();
+
+            // Обновить фильтр (чтобы новое объявление появилось)
+            renderAds();
+
+            closeModal();
+            alert('✅ Объявление опубликовано!');
+            saveBtn.innerText = originalText;
+            saveBtn.disabled = false;
+            isPublishing = false;
+        }
+
+        const saveAdBtn = document.getElementById('saveAdBtn');
+        saveAdBtn.onclick = (e) => {
+            e.preventDefault();
+            createAdAsync();
+        };
+
+        // Инициализация
+        loadInitialAds();
+        renderAds();
+
+        window.closeDetailModal = closeDetailModal;
+        window.closeModal = closeModal;
+    })();
 </script>
 </body>
 </html>
