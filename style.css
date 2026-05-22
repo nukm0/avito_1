@@ -30,7 +30,7 @@ body.theme-gradient {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    padding-bottom: 80px; /* чтобы контент не перекрывался меню */
+    padding-bottom: 80px;
 }
 
 .header {
@@ -155,11 +155,7 @@ body.theme-gradient {
     transform: translateY(-2px);
 }
 
-.menu-item:active {
-    transform: translateY(0);
-}
-
-/* Логгер (временный, потом уберем) */
+/* Логгер (временный) */
 .logger {
     position: fixed;
     bottom: 80px;
