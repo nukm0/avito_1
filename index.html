@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Барахолка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">🛍️ Барахолка</h1>
+            <div class="theme-buttons">
+                <button onclick="setTheme('light')" class="theme-btn">☀️ Белая</button>
+                <button onclick="setTheme('dark')" class="theme-btn">🌙 Ночная</button>
+                <button onclick="setTheme('gradient')" class="theme-btn">🎨 Градиент</button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="test-panel">
+                <h3>🔘 Тестовые кнопки</h3>
+                <div class="button-grid">
+                    <button onclick="addLog('🔐 Нажат вход в систему')" class="test-btn blue">Вход</button>
+                    <button onclick="addLog('💰 Нажата кнопка Купить')" class="test-btn green">Купить</button>
+                    <button onclick="addLog('🔍 Выполнен поиск')" class="test-btn purple">Поиск</button>
+                    <button onclick="addLog('👤 Открыт профиль')" class="test-btn indigo">Профиль</button>
+                    <button onclick="addLog('⚙️ Открыта админка')" class="test-btn red">Админка</button>
+                    <button onclick="addLog('🚫 Пользователь забанен')" class="test-btn orange">Бан</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Табличка с логами -->
+    <div class="logger">
+        <div class="logger-header">
+            <span>📝 Лог действий</span>
+            <button onclick="clearLogs()" class="clear-btn">Очистить</button>
+        </div>
+        <div class="logger-body" id="logList">
+            <div class="log-item">Готов к работе! Нажимайте на кнопки</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
