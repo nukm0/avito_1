@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Основные стили */
+:root {
+  --bg-gradient-start: #f3f4f6;
+  --bg-gradient-end: #ffffff;
+}
+
+/* Тема 1: Белая */
+body.theme-light {
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  min-height: 100vh;
+}
+
+/* Тема 2: Ночная */
+body.theme-dark {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #ffffff;
+}
+
+/* Тема 3: Градиент цветной */
+body.theme-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* Общие стили */
+body {
+  transition: background 0.3s ease;
+  margin: 0;
+  padding: 0;
+}
+
+/* Стили для карточек в разных темах */
+.theme-dark .card {
+  background: rgba(30, 30, 46, 0.9);
+  color: #ffffff;
+}
+
+.theme-gradient .card {
+  background: rgba(255, 255, 255, 0.95);
+}
