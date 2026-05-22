@@ -75,20 +75,11 @@
             border-radius: 60px;
             outline: none;
         }
-        .search-input:focus {
-            box-shadow: 0 0 0 3px #3b82f680;
-        }
-        .category-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 0.8rem;
-            opacity: 0.7;
-        }
         .category-filter {
             display: flex;
             flex-wrap: wrap;
             gap: 0.6rem;
+            margin-top: 0.5rem;
         }
         .cat-btn {
             background: rgba(0,0,0,0.05);
@@ -98,12 +89,10 @@
             font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
         }
         .cat-btn.active {
             background: #2563eb;
             color: white;
-            box-shadow: 0 4px 10px rgba(37,99,235,0.3);
         }
         .ads-grid {
             display: grid;
@@ -112,16 +101,16 @@
             margin-top: 1rem;
         }
         .ad-card {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(4px);
+            background: white;
             border-radius: 1.5rem;
             overflow: hidden;
             cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             transition: 0.2s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         .ad-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
         .ad-image {
             width: 100%;
@@ -154,22 +143,16 @@
             border: none;
             border-radius: 2rem;
             font-weight: 600;
-            font-size: 0.75rem;
             cursor: pointer;
-            background: rgba(0,0,0,0.05);
+            background: #e2e8f0;
         }
         .msg-btn {
             background: #2563eb;
             color: white;
         }
-        .dots-btn {
-            background: #1e293b;
-            color: white;
-            width: 42px;
-        }
         .floating-add {
             position: fixed;
-            bottom: 90px;
+            bottom: 20px;
             right: 20px;
             background: #2563eb;
             color: white;
@@ -182,7 +165,7 @@
             font-size: 2rem;
             border: none;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             z-index: 200;
         }
         .modal {
@@ -239,34 +222,10 @@
             display: inline-block;
             width: 100%;
         }
-        .menu-dots {
-            position: relative;
-        }
-        .dots-menu {
-            display: none;
-            position: absolute;
-            bottom: 100%;
-            right: 0;
-            background: #0f172a;
-            border-radius: 1rem;
-            padding: 0.5rem;
-            min-width: 150px;
-            flex-direction: column;
-            gap: 0.3rem;
-            z-index: 50;
-        }
-        .dots-menu button {
-            background: none;
-            border: none;
-            padding: 8px;
-            text-align: left;
-            color: white;
-            cursor: pointer;
-        }
         .empty-state {
             text-align: center;
             padding: 3rem;
-            background: rgba(255,255,255,0.5);
+            background: white;
             border-radius: 2rem;
         }
     </style>
@@ -277,12 +236,13 @@
         <h1 class="logo">🛍️ Покупка/продажа</h1>
         <button class="back-home" onclick="location.href='index.html'">🏠 На главную</button>
     </div>
+
+    <!-- Поиск и категории -->
     <div class="search-section">
         <div class="search-input-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" class="search-input" placeholder="Умный поиск: iphone, кроссовки...">
+            <input type="text" id="searchInput" class="search-input" placeholder="Умный поиск...">
         </div>
-        <div class="category-title">📂 КАТЕГОРИИ</div>
         <div class="category-filter" id="categoryFilter">
             <button data-cat="all" class="cat-btn active">Все</button>
             <button data-cat="Электроника" class="cat-btn">📱 Электроника</button>
@@ -292,15 +252,19 @@
             <button data-cat="Другое" class="cat-btn">📦 Другое</button>
         </div>
     </div>
+
+    <!-- Список объявлений -->
     <div id="adsList" class="ads-grid"></div>
 </div>
+
+<!-- Кнопка создания -->
 <button class="floating-add" id="addAdBtn">+</button>
 
-<!-- Модалка создания -->
+<!-- Модалка создания объявления -->
 <div id="createModal" class="modal">
     <div class="modal-content">
-        <h3>📢 Новое объявление</h3>
-        <input type="text" id="adTitle" placeholder="Название товара" required>
+        <h3>Новое объявление</h3>
+        <input type="text" id="adTitle" placeholder="Название" required>
         <select id="adCategory">
             <option>Электроника</option><option>Одежда</option><option>Обувь</option>
             <option>Дом и сад</option><option>Другое</option>
@@ -308,49 +272,45 @@
         <input type="number" id="adPrice" placeholder="Цена в ₽" required>
         <div class="file-label">📸 Загрузить фото</div>
         <input type="file" id="adImageFile" accept="image/*" style="display:none">
-        <div class="image-preview-area">
-            <img id="imagePreview" class="image-preview" alt="предпросмотр">
-        </div>
-        <textarea id="adDescription" rows="3" placeholder="Полное описание..."></textarea>
-        <button id="saveAdBtn">✅ Опубликовать</button>
+        <img id="imagePreview" class="image-preview">
+        <textarea id="adDescription" rows="3" placeholder="Описание"></textarea>
+        <button id="saveAdBtn">Опубликовать</button>
         <button onclick="closeModal()" style="background:#ef4444; margin-top:0.5rem;">Отмена</button>
     </div>
 </div>
 
-<!-- Модалка деталей -->
+<!-- Модалка просмотра деталей -->
 <div id="detailModal" class="modal">
     <div class="modal-content">
         <img id="detailImage" style="width:100%; border-radius:1rem; margin-bottom:1rem;">
         <h2 id="detailTitle"></h2>
         <p id="detailPrice" style="font-size:1.8rem; font-weight:bold; color:#22c55e;"></p>
-        <p id="detailCategory" style="opacity:0.7;"></p>
         <p id="detailDesc" style="margin:1rem 0;"></p>
         <button onclick="closeDetailModal()">Закрыть</button>
     </div>
 </div>
 
 <script>
-    // --- Данные и работа с хранилищем ---
+    // ----- Хранилище -----
     let ads = [];
 
-    function loadAds() {
+    function saveToLocalStorage() {
+        localStorage.setItem('baraholka_ads', JSON.stringify(ads));
+    }
+
+    function loadFromLocalStorage() {
         const stored = localStorage.getItem('baraholka_ads');
         if (stored) {
             ads = JSON.parse(stored);
         } else {
-            // тестовые объявления
+            // Несколько тестовых объявлений
             ads = [
-                { id: 1, title: "iPhone 16 Pro", category: "Электроника", price: 120000, imageData: null, imageUrl: "https://images.unsplash.com/photo-1678652196566-7b92f8e4cee1?w=400", description: "Отличное состояние, полный комплект." },
-                { id: 2, title: "Nike Air Max", category: "Обувь", price: 12500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", description: "Новые, размер 42, оригинал." },
-                { id: 3, title: "Умная колонка", category: "Электроника", price: 4500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1589003077984-894e133ddfab?w=400", description: "Красная, отличное состояние." }
+                { id: 1, title: "iPhone 16 Pro", category: "Электроника", price: 120000, imageData: null, imageUrl: "https://images.unsplash.com/photo-1678652196566-7b92f8e4cee1?w=400", description: "Отличное состояние" },
+                { id: 2, title: "Nike Air Max", category: "Обувь", price: 12500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", description: "Новые, размер 42" },
+                { id: 3, title: "Умная колонка", category: "Электроника", price: 4500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1589003077984-894e133ddfab?w=400", description: "Красная" }
             ];
-            saveAds();
+            saveToLocalStorage();
         }
-        renderAds();
-    }
-
-    function saveAds() {
-        localStorage.setItem('baraholka_ads', JSON.stringify(ads));
     }
 
     function getImageSrc(ad) {
@@ -359,90 +319,58 @@
         return 'https://via.placeholder.com/400?text=Нет+фото';
     }
 
-    // --- Фильтрация и рендер (без глюков) ---
+    // ----- Рендер списка с учётом фильтров -----
     let currentSearch = '';
     let currentCategory = 'all';
 
-    function filterAndRender() {
+    function renderAds() {
         const filtered = ads.filter(ad => {
             const matchSearch = ad.title.toLowerCase().includes(currentSearch.toLowerCase());
             const matchCat = currentCategory === 'all' || ad.category === currentCategory;
             return matchSearch && matchCat;
         });
-        renderAdsList(filtered);
-    }
-
-    function renderAdsList(items) {
         const container = document.getElementById('adsList');
-        if (!items.length) {
-            container.innerHTML = `<div class="empty-state">📭 Пока нет объявлений. Нажмите + чтобы создать первое</div>`;
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="empty-state">📭 Объявлений пока нет. Нажмите + чтобы создать</div>';
             return;
         }
-        container.innerHTML = items.map(ad => `
+        container.innerHTML = filtered.map(ad => `
             <div class="ad-card" data-id="${ad.id}">
-                <img class="ad-image" src="${getImageSrc(ad)}" onerror="this.src='https://via.placeholder.com/400?text=Ошибка'">
+                <img class="ad-image" src="${getImageSrc(ad)}" onerror="this.src='https://via.placeholder.com/400'">
                 <div class="ad-info">
                     <div class="ad-title">${escapeHtml(ad.title)}</div>
-                    <div class="ad-category" style="font-size:0.7rem; opacity:0.7;">${ad.category}</div>
                     <div class="ad-price">${Number(ad.price).toLocaleString()} ₽</div>
                     <div class="ad-buttons">
                         <button class="ad-btn msg-btn" data-id="${ad.id}">💬 Написать</button>
-                        <div class="menu-dots">
-                            <button class="ad-btn dots-btn" data-id="${ad.id}">⋮</button>
-                            <div class="dots-menu" id="menu-${ad.id}">
-                                <button data-action="complaint" data-id="${ad.id}">⚠️ Пожаловаться</button>
-                                <button data-action="favorite" data-id="${ad.id}">❤️ В избранное</button>
-                                <button data-action="rate" data-id="${ad.id}">⭐ Оценить продавца</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         `).join('');
 
-        // Навесить обработчики
+        // Клик по карточке — открыть детали
         document.querySelectorAll('.ad-card').forEach(card => {
-            card.onclick = (e) => {
-                if (e.target.closest('.ad-btn')) return;
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.msg-btn')) return;
                 const id = parseInt(card.dataset.id);
                 showDetail(id);
-            };
+            });
         });
+        // Кнопка "Написать"
         document.querySelectorAll('.msg-btn').forEach(btn => {
-            btn.onclick = (e) => {
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                alert('💬 Чат с продавцом будет доступен позже.');
-            };
-        });
-        document.querySelectorAll('.dots-btn').forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                const id = btn.dataset.id;
-                const menu = document.getElementById(`menu-${id}`);
-                if (!menu) return;
-                document.querySelectorAll('.dots-menu').forEach(m => m.style.display = 'none');
-                menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-            };
-        });
-        document.querySelectorAll('[data-action="complaint"]').forEach(btn => {
-            btn.onclick = (e) => { e.stopPropagation(); alert('⚠️ Жалоба отправлена модератору.'); };
-        });
-        document.querySelectorAll('[data-action="favorite"]').forEach(btn => {
-            btn.onclick = (e) => { e.stopPropagation(); alert('❤️ Добавлено в избранное.'); };
-        });
-        document.querySelectorAll('[data-action="rate"]').forEach(btn => {
-            btn.onclick = (e) => { e.stopPropagation(); alert('⭐ Оценка продавца уйдёт на модерацию.'); };
+                alert('💬 Чат с продавцом появится позже.');
+            });
         });
     }
 
     function showDetail(id) {
-        const ad = ads.find(a => a.id == id);
+        const ad = ads.find(a => a.id === id);
         if (!ad) return;
         document.getElementById('detailImage').src = getImageSrc(ad);
         document.getElementById('detailTitle').innerText = ad.title;
-        document.getElementById('detailPrice').innerHTML = `${Number(ad.price).toLocaleString()} ₽`;
-        document.getElementById('detailCategory').innerHTML = `📂 ${ad.category}`;
-        document.getElementById('detailDesc').innerHTML = ad.description || 'Нет описания';
+        document.getElementById('detailPrice').innerHTML = `${ad.price.toLocaleString()} ₽`;
+        document.getElementById('detailDesc').innerHTML = ad.description || 'Без описания';
         document.getElementById('detailModal').style.display = 'flex';
     }
 
@@ -456,10 +384,10 @@
         });
     }
 
-    // --- Создание объявления ---
+    // ----- Создание объявления с фото -----
     let selectedImageBase64 = null;
 
-    function openCreateModal() {
+    document.getElementById('addAdBtn').onclick = () => {
         selectedImageBase64 = null;
         document.getElementById('imagePreview').style.display = 'none';
         document.getElementById('adImageFile').value = '';
@@ -467,15 +395,14 @@
         document.getElementById('adPrice').value = '';
         document.getElementById('adDescription').value = '';
         document.getElementById('createModal').style.display = 'flex';
-    }
+    };
 
-    document.getElementById('addAdBtn').onclick = openCreateModal;
     document.querySelector('.file-label').onclick = () => document.getElementById('adImageFile').click();
     document.getElementById('adImageFile').onchange = function(e) {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (ev) => {
+            reader.onload = function(ev) {
                 selectedImageBase64 = ev.target.result;
                 const preview = document.getElementById('imagePreview');
                 preview.src = selectedImageBase64;
@@ -485,13 +412,13 @@
         }
     };
 
-    async function createAd() {
+    function createNewAd() {
         const title = document.getElementById('adTitle').value.trim();
         const category = document.getElementById('adCategory').value;
         const price = parseFloat(document.getElementById('adPrice').value);
         const description = document.getElementById('adDescription').value.trim();
         if (!title || isNaN(price) || price <= 0) {
-            alert('Укажите название и цену');
+            alert('Заполните название и цену');
             return;
         }
         if (!selectedImageBase64) {
@@ -500,16 +427,18 @@
         }
         const newAd = {
             id: Date.now(),
-            title, category, price,
+            title: title,
+            category: category,
+            price: price,
             imageData: selectedImageBase64,
             imageUrl: null,
             description: description || 'Без описания'
         };
-        ads.unshift(newAd);
-        saveAds();
-        filterAndRender();   // обновить список с учётом текущих фильтров
+        ads.unshift(newAd);   // новое объявление в начало списка
+        saveToLocalStorage();
+        renderAds();          // обновляем список
         closeModal();
-        alert('Объявление опубликовано');
+        alert('✅ Объявление добавлено!');
     }
 
     function closeModal() {
@@ -521,34 +450,30 @@
 
     document.getElementById('saveAdBtn').onclick = (e) => {
         e.preventDefault();
-        createAd();
+        createNewAd();
     };
 
-    // --- Инициализация поиска и категорий ---
+    // ----- Поиск и категории -----
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', (e) => {
         currentSearch = e.target.value;
-        filterAndRender();
+        renderAds();
     });
     document.querySelectorAll('.cat-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentCategory = btn.getAttribute('data-cat');
-            filterAndRender();
+            renderAds();
         });
     });
 
-    // Закрытие меню троеточия при клике вне
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.menu-dots')) {
-            document.querySelectorAll('.dots-menu').forEach(m => m.style.display = 'none');
-        }
-    });
+    // Запуск
+    loadFromLocalStorage();
+    renderAds();
 
-    loadAds();
-    window.closeDetailModal = closeDetailModal;
     window.closeModal = closeModal;
+    window.closeDetailModal = closeDetailModal;
 </script>
 </body>
 </html>
