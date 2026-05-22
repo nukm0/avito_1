@@ -13,25 +13,10 @@
 
         body {
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #f3f4f6;
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+            color: #0f172a;
             min-height: 100vh;
             padding-bottom: 80px;
-            transition: background 0.2s;
-        }
-
-        /* Тёмная / светлая темы — по желанию, добавим базовые переменные */
-        .theme-light {
-            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
-            color: #0f172a;
-        }
-        .theme-dark {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #e2e8f0;
-        }
-        /* по умолчанию светлая */
-        body {
-            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
-            color: #0f172a;
         }
 
         .container {
@@ -40,7 +25,6 @@
             padding: 1rem 1.5rem 2rem;
         }
 
-        /* шапка */
         .header {
             display: flex;
             justify-content: space-between;
@@ -68,14 +52,12 @@
             font-weight: 500;
             cursor: pointer;
             transition: 0.2s;
-            color: inherit;
         }
         .back-home:hover {
             background: rgba(0,0,0,0.1);
             transform: scale(0.97);
         }
 
-        /* поисковая секция */
         .search-section {
             background: rgba(255,255,255,0.7);
             backdrop-filter: blur(12px);
@@ -83,7 +65,6 @@
             padding: 1.5rem;
             margin-bottom: 2rem;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.5);
         }
         .search-input-wrapper {
             position: relative;
@@ -103,21 +84,16 @@
             border: none;
             background: rgba(255,255,255,0.9);
             border-radius: 60px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: 0.2s;
             outline: none;
         }
         .search-input:focus {
             box-shadow: 0 0 0 3px #3b82f680;
-            background: white;
         }
 
-        /* категории */
         .category-title {
             font-size: 0.85rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
             margin-bottom: 0.8rem;
             opacity: 0.7;
         }
@@ -135,7 +111,6 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: inherit;
         }
         .cat-btn.active {
             background: #2563eb;
@@ -147,7 +122,6 @@
             transform: translateY(-1px);
         }
 
-        /* сетка карточек */
         .ads-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -162,12 +136,10 @@
             transition: all 0.25s ease;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.6);
         }
         .ad-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
-            background: rgba(255,255,255,0.95);
         }
         .ad-image {
             width: 100%;
@@ -182,12 +154,6 @@
             font-weight: 700;
             font-size: 1.2rem;
             margin-bottom: 0.3rem;
-        }
-        .ad-category {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
         }
         .ad-price {
             font-weight: 800;
@@ -210,7 +176,6 @@
             cursor: pointer;
             transition: 0.15s;
             background: rgba(0,0,0,0.05);
-            color: inherit;
         }
         .msg-btn {
             background: #2563eb;
@@ -223,7 +188,6 @@
             width: 42px;
         }
 
-        /* плавающая кнопка + */
         .floating-add {
             position: fixed;
             bottom: 90px;
@@ -246,10 +210,8 @@
         }
         .floating-add:hover {
             transform: scale(1.05);
-            background: #1d4ed8;
         }
 
-        /* модальные окна */
         .modal {
             display: none;
             position: fixed;
@@ -267,7 +229,6 @@
             width: 90%;
             border-radius: 2rem;
             padding: 1.8rem;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.4);
         }
         .modal-content h3 {
             font-size: 1.5rem;
@@ -313,7 +274,6 @@
             display: inline-block;
             width: 100%;
         }
-        /* меню трёх точек */
         .menu-dots {
             position: relative;
         }
@@ -342,10 +302,6 @@
         .dots-menu button:hover {
             background: #334155;
         }
-        hr {
-            margin: 0.5rem 0;
-            border-color: rgba(255,255,255,0.1);
-        }
         .empty-state {
             text-align: center;
             padding: 3rem;
@@ -355,7 +311,6 @@
         }
         @media (max-width: 640px) {
             .container { padding: 1rem; }
-            .ad-title { font-size: 1rem; }
         }
     </style>
 </head>
@@ -366,11 +321,10 @@
         <button class="back-home" onclick="location.href='index.html'">🏠 На главную</button>
     </div>
 
-    <!-- Поиск + фильтры (красиво) -->
     <div class="search-section">
         <div class="search-input-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" class="search-input" placeholder="Умный поиск: iphone, кроссовки, пальто...">
+            <input type="text" id="searchInput" class="search-input" placeholder="Умный поиск: iphone, кроссовки...">
         </div>
         <div class="category-title">📂 КАТЕГОРИИ</div>
         <div class="category-filter" id="categoryFilter">
@@ -383,14 +337,12 @@
         </div>
     </div>
 
-    <!-- Список объявлений -->
     <div id="adsList" class="ads-grid"></div>
 </div>
 
-<!-- Кнопка создать объявление -->
 <button class="floating-add" id="addAdBtn">+</button>
 
-<!-- Модальное окно создания объявления (с загрузкой фото с устройства) -->
+<!-- Модалка создания -->
 <div id="createModal" class="modal">
     <div class="modal-content">
         <h3>📢 Новое объявление</h3>
@@ -400,21 +352,18 @@
             <option>Дом и сад</option><option>Другое</option>
         </select>
         <input type="number" id="adPrice" placeholder="Цена в ₽" required>
-        
-        <!-- Загрузка фото с устройства -->
         <div class="file-label">📸 Загрузить фото</div>
         <input type="file" id="adImageFile" accept="image/*" style="display:none">
         <div class="image-preview-area">
             <img id="imagePreview" class="image-preview" alt="предпросмотр">
         </div>
-        
         <textarea id="adDescription" rows="3" placeholder="Полное описание..."></textarea>
         <button id="saveAdBtn">✅ Опубликовать</button>
         <button onclick="closeModal()" style="background:#ef4444; margin-top:0.5rem;">Отмена</button>
     </div>
 </div>
 
-<!-- Модальное окно детального просмотра -->
+<!-- Модалка деталей -->
 <div id="detailModal" class="modal">
     <div class="modal-content">
         <img id="detailImage" style="width:100%; border-radius:1rem; margin-bottom:1rem;">
@@ -429,8 +378,8 @@
 <script>
     // ---------- Глобальные данные ----------
     let ads = [];
+    let isPublishing = false;   // защита от двойного нажатия
 
-    // Загрузка / сохранение
     function saveAds() {
         localStorage.setItem('baraholka_ads', JSON.stringify(ads));
     }
@@ -440,49 +389,22 @@
         if (stored) {
             ads = JSON.parse(stored);
         } else {
-            // Тестовые объявления
             ads = [
-                {
-                    id: 1,
-                    title: "iPhone 16 Pro",
-                    category: "Электроника",
-                    price: 120000,
-                    imageData: null,      // для старых – покажем заглушку
-                    imageUrl: "https://images.unsplash.com/photo-1678652196566-7b92f8e4cee1?w=400",
-                    description: "Отличное состояние, полный комплект."
-                },
-                {
-                    id: 2,
-                    title: "Nike Air Max",
-                    category: "Обувь",
-                    price: 12500,
-                    imageData: null,
-                    imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
-                    description: "Новые, размер 42, оригинал."
-                },
-                {
-                    id: 3,
-                    title: "Умная колонка Яндекс",
-                    category: "Электроника",
-                    price: 4500,
-                    imageData: null,
-                    imageUrl: "https://images.unsplash.com/photo-1589003077984-894e133ddfab?w=400",
-                    description: "Красная, отличное состояние."
-                }
+                { id: 1, title: "iPhone 16 Pro", category: "Электроника", price: 120000, imageData: null, imageUrl: "https://images.unsplash.com/photo-1678652196566-7b92f8e4cee1?w=400", description: "Отличное состояние, полный комплект." },
+                { id: 2, title: "Nike Air Max", category: "Обувь", price: 12500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", description: "Новые, размер 42, оригинал." },
+                { id: 3, title: "Умная колонка", category: "Электроника", price: 4500, imageData: null, imageUrl: "https://images.unsplash.com/photo-1589003077984-894e133ddfab?w=400", description: "Красная, отличное состояние." }
             ];
             saveAds();
         }
         renderAds();
     }
 
-    // Вспомогательная: получить src картинки из объявления (если загружена base64, используем её)
     function getAdImageSrc(ad) {
         if (ad.imageData && ad.imageData.startsWith('data:image')) return ad.imageData;
         if (ad.imageUrl) return ad.imageUrl;
         return 'https://via.placeholder.com/400?text=Нет+фото';
     }
 
-    // Фильтрация / поиск
     function filterAds() {
         const query = document.getElementById('searchInput').value.toLowerCase();
         const activeCat = document.querySelector('.cat-btn.active')?.getAttribute('data-cat') || 'all';
@@ -494,7 +416,6 @@
         renderAds(filtered);
     }
 
-    // Отрисовка карточек
     function renderAds(adsToRender = null) {
         const container = document.getElementById('adsList');
         const items = adsToRender || ads;
@@ -509,7 +430,7 @@
                     <img class="ad-image" src="${imgSrc}" alt="${ad.title}" onerror="this.src='https://via.placeholder.com/400?text=Ошибка'">
                     <div class="ad-info">
                         <div class="ad-title">${escapeHtml(ad.title)}</div>
-                        <div class="ad-category">${ad.category}</div>
+                        <div class="ad-category" style="font-size:0.7rem; opacity:0.7;">${ad.category}</div>
                         <div class="ad-price">${Number(ad.price).toLocaleString()} ₽</div>
                         <div class="ad-buttons">
                             <button class="ad-btn msg-btn" data-id="${ad.id}">💬 Написать</button>
@@ -526,8 +447,6 @@
                 </div>
             `;
         }).join('');
-
-        // Обработчики кликов
         attachCardEvents();
     }
 
@@ -558,8 +477,7 @@
             btn.removeEventListener('click', btn._msgListener);
             const msgListener = (e) => {
                 e.stopPropagation();
-                const id = btn.dataset.id;
-                alert(`💬 Демо: чат с продавцом объявления #${id} будет доступен позже.`);
+                alert('💬 Чат с продавцом будет доступен позже.');
             };
             btn.addEventListener('click', msgListener);
             btn._msgListener = msgListener;
@@ -577,21 +495,22 @@
             btn.addEventListener('click', dotsListener);
             btn._dotsListener = dotsListener;
         });
-        // Действия меню: жалоба, избранное, оценка
+        // Действия меню
         document.querySelectorAll('[data-action="complaint"]').forEach(btn => {
             btn.onclick = (e) => { e.stopPropagation(); alert('⚠️ Жалоба отправлена модератору.'); };
         });
         document.querySelectorAll('[data-action="favorite"]').forEach(btn => {
-            btn.onclick = (e) => { e.stopPropagation(); alert('❤️ Добавлено в избранное (сохраняется локально)'); };
+            btn.onclick = (e) => { e.stopPropagation(); alert('❤️ Добавлено в избранное.'); };
         });
         document.querySelectorAll('[data-action="rate"]').forEach(btn => {
             btn.onclick = (e) => { e.stopPropagation(); alert('⭐ Оценка продавца уйдёт на модерацию.'); };
         });
         // Закрыть меню при клике вне
-        document.addEventListener('click', function closeMenus() {
+        const closeAllMenus = () => {
             document.querySelectorAll('.dots-menu').forEach(m => m.style.display = 'none');
-            document.removeEventListener('click', closeMenus);
-        });
+        };
+        document.removeEventListener('click', closeAllMenus);
+        document.addEventListener('click', closeAllMenus);
     }
 
     function showDetail(id) {
@@ -610,7 +529,7 @@
         document.getElementById('detailModal').style.display = 'none';
     }
 
-    // --- Создание объявления с загрузкой фото (base64) ---
+    // --- Создание объявления (оптимизированное, без блокировки UI) ---
     let selectedImageBase64 = null;
 
     document.getElementById('addAdBtn').onclick = () => {
@@ -623,7 +542,6 @@
         document.getElementById('createModal').style.display = 'flex';
     };
 
-    // Клик по лейблу открывает выбор файла
     document.querySelector('.file-label').onclick = () => {
         document.getElementById('adImageFile').click();
     };
@@ -645,7 +563,9 @@
         document.getElementById('createModal').style.display = 'none';
     }
 
-    function createAd() {
+    // Асинхронное создание без блокировки UI
+    async function createAdAsync() {
+        if (isPublishing) return;
         const title = document.getElementById('adTitle').value.trim();
         const category = document.getElementById('adCategory').value;
         const price = parseFloat(document.getElementById('adPrice').value);
@@ -660,25 +580,46 @@
             return;
         }
 
+        isPublishing = true;
+        const saveBtn = document.getElementById('saveAdBtn');
+        const originalText = saveBtn.innerText;
+        saveBtn.innerText = 'Публикация...';
+        saveBtn.disabled = true;
+
+        // Имитация микро-задержки для освобождения потока (не блокируем UI)
+        await new Promise(resolve => setTimeout(resolve, 10));
+
         const newAd = {
             id: Date.now(),
             title: title,
             category: category,
             price: price,
-            imageData: selectedImageBase64,   // сохраняем base64
+            imageData: selectedImageBase64,
             imageUrl: null,
             description: description || 'Без описания'
         };
         ads.unshift(newAd);
         saveAds();
-        renderAds();
-        closeModal();
-        alert('✅ Объявление опубликовано!');
+
+        // Отложенный рендер, чтобы не блокировать текущий цикл
+        requestAnimationFrame(() => {
+            renderAds();
+            closeModal();
+            alert('✅ Объявление опубликовано!');
+            saveBtn.innerText = originalText;
+            saveBtn.disabled = false;
+            isPublishing = false;
+        });
     }
 
-    document.getElementById('saveAdBtn').onclick = createAd;
+    // Привязываем обработчик с предотвращением множественных вызовов
+    const saveBtn = document.getElementById('saveAdBtn');
+    saveBtn.onclick = (e) => {
+        e.preventDefault();
+        createAdAsync();
+    };
 
-    // --- поиск, категории ---
+    // Поиск и категории
     document.getElementById('searchInput').addEventListener('input', filterAds);
     document.querySelectorAll('.cat-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -688,7 +629,6 @@
         });
     });
 
-    // Запуск
     loadAdsFromStorage();
     window.closeDetailModal = closeDetailModal;
     window.closeModal = closeModal;
