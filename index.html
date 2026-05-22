@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Барахолка</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Барахолка - Покупка и продажа вещей</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-light">
@@ -32,14 +32,34 @@
         </div>
     </div>
 
-    <!-- Табличка с логами -->
+    <!-- Нижнее меню (4 кнопки) -->
+    <div class="bottom-menu">
+        <button onclick="menuClick('buy')" class="menu-item">
+            <span class="menu-icon">🛒</span>
+            <span class="menu-text">Покупка/продажа</span>
+        </button>
+        <button onclick="menuClick('profile')" class="menu-item">
+            <span class="menu-icon">👤</span>
+            <span class="menu-text">Мой профиль</span>
+        </button>
+        <button onclick="menuClick('info')" class="menu-item">
+            <span class="menu-icon">ℹ️</span>
+            <span class="menu-text">Инфо</span>
+        </button>
+        <button onclick="menuClick('admin')" class="menu-item">
+            <span class="menu-icon">⚙️</span>
+            <span class="menu-text">Админ панель</span>
+        </button>
+    </div>
+
+    <!-- Табличка с логами (оставим пока, потом уберем) -->
     <div class="logger">
         <div class="logger-header">
             <span>📝 Лог действий</span>
             <button onclick="clearLogs()" class="clear-btn">Очистить</button>
         </div>
         <div class="logger-body" id="logList">
-            <div class="log-item">Готов к работе! Нажимайте на кнопки</div>
+            <div class="log-item">✅ Сайт загружен. Нажимайте кнопки</div>
         </div>
     </div>
 
